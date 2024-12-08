@@ -17,11 +17,7 @@ export const App = () => {
           <Route
             path="/"
             element={
-              isAuthenticated ? (
-                <MainPage />
-              ) : (
-                <Navigate to="/auth/registration" />
-              )
+              isAuthenticated ? <MainPage /> : <Navigate to="/auth/login" />
             }
           />
           <Route
