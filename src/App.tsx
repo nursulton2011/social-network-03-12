@@ -4,7 +4,7 @@ import { MainPage } from "./pages/MainPage/MainPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { RegistrationPage } from "./pages/RegistrationPage/RegistrationPage";
 import { ProfilePage } from "./pages/ProfilePage/ProfilePage";
-import { useAuth } from "./authContext"; // Хук для доступа к контексту
+import { useAuth } from "./authContext";
 
 export const App = () => {
   const { isAuthenticated } = useAuth();
@@ -14,18 +14,26 @@ export const App = () => {
       <Header />
       <div className="container">
         <Routes>
-          {/* Если пользователь не авторизован, перенаправляем на страницу логина */}
           <Route
             path="/"
             element={
-              isAuthenticated ? <MainPage /> : <Navigate to="/auth/login" />
+              isAuthenticated ? (
+                <MainPage />
+              ) : (
+                <Navigate to="/auth/registration" />
+              )
             }
           />
           <Route
-            path="auth/login"
+            path="/auth/login"
             element={isAuthenticated ? <Navigate to="/" /> : <LoginPage />}
           />
-          <Route path="/auth/registration" element={<RegistrationPage />} />
+          <Route
+            path="/auth/registration"
+            element={
+              isAuthenticated ? <Navigate to="/" /> : <RegistrationPage />
+            }
+          />
           <Route
             path="/profile"
             element={

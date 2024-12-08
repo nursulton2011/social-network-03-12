@@ -1,43 +1,45 @@
-// RegistrationPage.tsx
 import React, { useState } from "react";
-import { Input } from "../../components/Input"; // Импорт компонента Input
+import { Input } from "../../components/Input";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../authContext";
 import "./RegistrationPage.scss";
 
 export const RegistrationPage: React.FC = () => {
-  // Состояния для ввода данных
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  // Обработчик отправки формы
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault(); // Отменяем стандартное поведение формы
+    event.preventDefault();
 
-    // Проверка на пустые поля
     if (!username || !email || !password || !confirmPassword) {
       setError("Please fill in all fields.");
       return;
     }
 
-    // Проверка на совпадение паролей
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // Проверка на правильность email
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address.");
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*\W).+$/;
+    if (!passwordRegex.test(password)) {
+      setError(
+        "Password must contain at least one uppercase letter, one number, and one special character."
+      );
       return;
     }
 
-    // Если все проверки пройдены
     setError("");
-    console.log("Form submitted:", { username, email, password });
-    // Здесь можно отправить данные на сервер
+    console.log("Registration successful:", { username, email, password });
+
+    register(); // Сохраняем статус "зарегистрирован"
+    navigate("/"); // Перенаправляем на MainPage
   };
 
   return (
@@ -50,7 +52,6 @@ export const RegistrationPage: React.FC = () => {
           placeholder="Никнейм"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          label="Никнейм" // Передаем label
         />
         <Input
           type="email"
@@ -58,7 +59,6 @@ export const RegistrationPage: React.FC = () => {
           placeholder="Эл.почта"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          label="Эл.почта" // Передаем label
         />
         <Input
           type="password"
@@ -66,22 +66,17 @@ export const RegistrationPage: React.FC = () => {
           placeholder="Пароль"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          label="Пароль" // Передаем label
         />
         <Input
-          type="Пароль"
+          type="password"
           name="confirmPassword"
-          placeholder="Потвержедения пароля"
+          placeholder="Потверждения пароля"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          label="Потвержедения пароля" // Передаем label
         />
         <button type="submit">Register</button>
       </form>
       {error && <p className="error">{error}</p>}
-      <p>
-        Already have an account? <a href="/auth/login">Login</a>
-      </p>
     </div>
   );
 };
